@@ -7,7 +7,6 @@ var path = require('path');
 
 function TediousWrapper(opts) {
   if (!(this instanceof TediousWrapper)) {
-    console.log('not instanceof.. calling new.');
     return new TediousWrapper(opts);
   }
 
@@ -18,8 +17,8 @@ function TediousWrapper(opts) {
   );
 
   var poolConfig = {
-    min: 2,
-    max: 4,
+    min: config.poolMin,
+    max: config.poolMax,
     log: false,
   };
 
@@ -28,8 +27,9 @@ function TediousWrapper(opts) {
     password: config.password,
     server: config.server,
     options: {
+      encrypt: config.encrypt,
       database: config.dbname,
-      rowCollectionOnDone: true,
+      rowCollectionOnRequestCompletion: true,
     },
   };
 
@@ -39,22 +39,21 @@ function TediousWrapper(opts) {
 TediousWrapper.prototype.exec = function exec(sql, cb) {
   this.pool.acquire(function (err, conn) {
     if (err) {
-      console.error(err);
+      return console.error('Pool Error: ' + err);
     }
 
-    var request = new Request(sql, function (err, count) {
+    var req = new Request(sql, function (err, count, rows) {
       if (err) {
-        console.error(err);
+        console.error('Request Error: ' + err);
+      } else {
+        console.log('Rows: ' + count);
+        cb(rows);
       }
-
-      console.log('Rows: ' + count);
 
       conn.release();
     });
 
-    request.on('done', function (count, more, rows) {
-      cb(rows);
-    });
+    conn.execSql(req);
   });
 };
 
