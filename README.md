@@ -14,7 +14,7 @@ module.exports = db;
 Then elsewhere in project just require db and use like:
 
 ```Javascript
-db.exec('some sql', function (rows) {
+db.exec('some sql', function (err, rows) {
   // do something with rows..
 });
 ```

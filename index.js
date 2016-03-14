@@ -44,16 +44,18 @@ TediousWrapper.prototype.exec = function exec(sql, cb) {
 
   this.pool.acquire(function (err, conn) {
     if (err) {
-      return console.error('Pool Error: ' + err);
+      console.error('Pool Error: ' + err);
+      return cb(err, null);
     }
 
     var req = new Request(sql, function (err, count, rows) {
       if (err) {
         console.error('Request Error: ' + err);
+        cb(err, null);
       } else {
         console.log(count + 'rows in ' + timing.elapsed(t0) + 'ms.');
 
-        cb(_.map(rows, function (row) {
+        cb(null, _.map(rows, function (row) {
           return _.reduce(row, function (rowObj, col) {
             rowObj[col.metadata.colName] = col.value;
             return rowObj;
