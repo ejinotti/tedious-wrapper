@@ -1,7 +1,7 @@
 'use strict';
 
 var ConnPool = require('tedious-connection-pool');
-var Request = require('tedious').Request;
+var tedious = require('tedious');
 
 var path = require('path');
 var _ = require('underscore');
@@ -9,10 +9,6 @@ var _ = require('underscore');
 var timing = require('./timing');
 
 function TediousWrapper(opts) {
-  if (!(this instanceof TediousWrapper)) {
-    return new TediousWrapper(opts);
-  }
-
   opts = opts || {};
 
   var config = require(
@@ -39,7 +35,7 @@ function TediousWrapper(opts) {
   this.pool = new ConnPool(poolConfig, connConfig);
 }
 
-TediousWrapper.prototype.exec = function exec(sql, cb) {
+TediousWrapper.prototype.exec = function exec(sql, params, cb) {
   var t0 = timing.init();
 
   this.pool.acquire(function (err, conn) {
@@ -48,7 +44,7 @@ TediousWrapper.prototype.exec = function exec(sql, cb) {
       return cb(err, null);
     }
 
-    var req = new Request(sql, function (err, count, rows) {
+    var req = new tedious.Request(sql, function (err, count, rows) {
       if (err) {
         console.error('Request Error: ' + err);
         cb(err, null);
@@ -66,8 +62,16 @@ TediousWrapper.prototype.exec = function exec(sql, cb) {
       conn.release();
     });
 
+    _.each(params, function (param, name) {
+      req.addParameter(name, param.type, param.value);
+    });
+
     conn.execSql(req);
   });
 };
 
-module.exports = TediousWrapper;
+exports.init = function init(opts) {
+  return new TediousWrapper(opts);
+};
+
+exports.TYPES = tedious.TYPES;
