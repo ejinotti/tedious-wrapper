@@ -4,6 +4,7 @@ var ConnPool = require('tedious-connection-pool');
 var Request = require('tedious').Request;
 
 var path = require('path');
+var _ = require('underscore');
 
 function TediousWrapper(opts) {
   if (!(this instanceof TediousWrapper)) {
@@ -47,7 +48,13 @@ TediousWrapper.prototype.exec = function exec(sql, cb) {
         console.error('Request Error: ' + err);
       } else {
         console.log('Rows: ' + count);
-        cb(rows);
+
+        cb(_.map(rows, function (row) {
+          return _.reduce(row, function (rowObj, col) {
+            rowObj[col.metadata.colName] = col.value;
+            return rowObj;
+          }, {});
+        }));
       }
 
       conn.release();
