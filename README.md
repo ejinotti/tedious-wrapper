@@ -7,7 +7,7 @@ Create `tds-config.json` file in your project base dir. **Remember to gitignore 
 Create `db.js` like:
 
 ```Javascript
-var db = require('tedious-wrapper')({path: __dirname__});
+var db = require('tedious-wrapper')({path: __dirname});
 module.exports = db;
 ```
 
