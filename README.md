@@ -36,3 +36,11 @@ db.exec(sql, params, function (err, rows) {
   // do something with rows..
 });
 ```
+
+Stored procedures:
+
+```Javascript
+db.execsp(name, params, function (err, rows) {
+  // do something with rows..
+});
+```
