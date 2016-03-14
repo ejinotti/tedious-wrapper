@@ -1,7 +1,7 @@
 'use strict';
 
 var ConnPool = require('tedious-connection-pool');
-var tedious = require('tedious');
+var Request = require('tedious').Request;
 
 var path = require('path');
 var _ = require('underscore');
@@ -44,7 +44,7 @@ TediousWrapper.prototype.exec = function exec(sql, params, cb) {
       return cb(err, null);
     }
 
-    var req = new tedious.Request(sql, function (err, count, rows) {
+    var req = new Request(sql, function (err, count, rows) {
       if (err) {
         console.error('Request Error: ' + err);
         cb(err, null);
@@ -70,8 +70,8 @@ TediousWrapper.prototype.exec = function exec(sql, params, cb) {
   });
 };
 
-exports.init = function init(opts) {
+TediousWrapper.prototype.TYPES = require('tedious').TYPES;
+
+module.exports = function (opts) {
   return new TediousWrapper(opts);
 };
-
-exports.TYPES = tedious.TYPES;

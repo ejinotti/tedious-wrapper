@@ -7,14 +7,32 @@ Create `tds-config.json` file in your project base dir. **Remember to gitignore 
 Create `db.js` like:
 
 ```Javascript
-var db = require('tedious-wrapper').init({path: __dirname});
+var db = require('tedious-wrapper')({path: __dirname});
 module.exports = db;
 ```
 
 Then elsewhere in project just require db and use like:
 
 ```Javascript
-db.exec('some sql', function (err, rows) {
+db.exec('some sql', null, function (err, rows) {
+  // do something with rows..
+});
+```
+
+Example with input params:
+
+```Javascript
+// Tedious uses '@' to specify params
+var sql = 'select * from users where id = @id';
+
+var params = {
+  id: {
+    type: db.TYPES.Int,
+    value: 69,
+  },
+};
+
+db.exec(sql, params, function (err, rows) {
   // do something with rows..
 });
 ```
