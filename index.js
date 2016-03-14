@@ -6,6 +6,8 @@ var Request = require('tedious').Request;
 var path = require('path');
 var _ = require('underscore');
 
+var timing = require('./timing');
+
 function TediousWrapper(opts) {
   if (!(this instanceof TediousWrapper)) {
     return new TediousWrapper(opts);
@@ -38,6 +40,8 @@ function TediousWrapper(opts) {
 }
 
 TediousWrapper.prototype.exec = function exec(sql, cb) {
+  var t0 = timing.init();
+
   this.pool.acquire(function (err, conn) {
     if (err) {
       return console.error('Pool Error: ' + err);
@@ -47,7 +51,7 @@ TediousWrapper.prototype.exec = function exec(sql, cb) {
       if (err) {
         console.error('Request Error: ' + err);
       } else {
-        console.log('Rows: ' + count);
+        console.log(count + 'rows in ' + timing.elapsed(t0) + 'ms.');
 
         cb(_.map(rows, function (row) {
           return _.reduce(row, function (rowObj, col) {
