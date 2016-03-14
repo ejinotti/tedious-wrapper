@@ -35,7 +35,7 @@ function TediousWrapper(opts) {
   this.pool = new ConnPool(poolConfig, connConfig);
 }
 
-TediousWrapper.prototype.exec = function exec(sql, params, cb) {
+function execute(sql, params, cb, method) {
   var t0 = timing.init();
 
   this.pool.acquire(function (err, conn) {
@@ -66,8 +66,16 @@ TediousWrapper.prototype.exec = function exec(sql, params, cb) {
       req.addParameter(name, param.type, param.value);
     });
 
-    conn.execSql(req);
+    conn[method](req);
   });
+}
+
+TediousWrapper.prototype.exec = function exec(sql, params, cb) {
+  execute.call(this, sql, params, cb, 'execSql');
+};
+
+TediousWrapper.prototype.execsp = function execsp(sql, params, cb) {
+  execute.call(this, sql, params, cb, 'callProcedure');
 };
 
 TediousWrapper.prototype.TYPES = require('tedious').TYPES;
