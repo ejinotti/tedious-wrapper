@@ -53,7 +53,7 @@ TediousWrapper.prototype.exec = function exec(sql, cb) {
         console.error('Request Error: ' + err);
         cb(err, null);
       } else {
-        console.log(count + 'rows in ' + timing.elapsed(t0) + 'ms.');
+        console.log(count + ' rows in ' + timing.elapsed(t0) + 'ms.');
 
         cb(null, _.map(rows, function (row) {
           return _.reduce(row, function (rowObj, col) {
