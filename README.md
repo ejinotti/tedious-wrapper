@@ -6,14 +6,14 @@ Create `tds-config.json` file in your project base dir. **Remember to gitignore 
 
 Create `db.js` like:
 
-```
+```Javascript
 var db = require('tedious-wrapper')({path: __dirname__});
 module.exports = db;
 ```
 
 Then elsewhere in project just require db and use like:
 
-```
+```Javascript
 db.exec('some sql', function (rows) {
   // do something with rows..
 });
