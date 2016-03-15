@@ -2,7 +2,9 @@ A simple wrapper for [tedious](https://github.com/pekim/tedious).
 
 ####Intended Usage
 
-Create `tds-config.json` file in your project base dir. **Remember to gitignore this file!**
+Create `tds-config.json` file in your project base dir. It must at a minimum
+specify `server`, `username`, and `password`. **Remember to gitignore this
+file!**
 
 Create `db.js` like:
 

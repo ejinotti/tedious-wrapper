@@ -16,20 +16,26 @@ function TediousWrapper(opts) {
   );
 
   var poolConfig = {
-    min: config.poolMin,
-    max: config.poolMax,
-    log: false,
+    min: config.poolMin || 5,
+    max: config.poolMax || 10,
+    log: config.poolLog || false,
   };
+
+  var options = {rowCollectionOnRequestCompletion: true};
+
+  if (config.encrypt !== undefined) {
+    options.encrypt = config.encrypt;
+  }
+
+  if (config.dbname !== undefined) {
+    options.database = config.dbname;
+  }
 
   var connConfig = {
     userName: config.username,
     password: config.password,
     server: config.server,
-    options: {
-      encrypt: config.encrypt,
-      database: config.dbname,
-      rowCollectionOnRequestCompletion: true,
-    },
+    options: options,
   };
 
   this.pool = new ConnPool(poolConfig, connConfig);
