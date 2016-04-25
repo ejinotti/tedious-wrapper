@@ -55,14 +55,16 @@ function execute(sql, params, cb, method) {
         console.error('Request Error: ' + err);
         cb(err, null);
       } else {
-        console.log(count + ' rows in ' + timing.elapsed(t0) + 'ms.');
-
-        cb(null, _.map(rows, function (row) {
+        var result = _.map(rows, function (row) {
           return _.reduce(row, function (rowObj, col) {
             rowObj[col.metadata.colName] = col.value;
             return rowObj;
           }, {});
-        }));
+        });
+
+        console.log(result.length + ' rows in ' + timing.elapsed(t0) + 'ms.');
+
+        cb(null, result);
       }
 
       conn.release();
